@@ -10,21 +10,9 @@ import json
 
 
 class Certificate(base_api_core.Core):
-    def __init__(self,
-                 ip_address: str,
-                 port: str,
-                 username: str,
-                 password: str,
-                 secure: bool = False,
-                 cert_verify: bool = False,
-                 dsm_version: int = 7,
-                 debug: bool = True,
-                 otp_code: Optional[str] = None
-                 ) -> None:
-        super(Certificate, self).__init__(ip_address, port, username, password, secure, cert_verify, dsm_version, debug,
-                                          otp_code)
+    def __init__(self, debug: bool = True, *args, **kwargs):
+        super(Certificate, self).__init__(*args, **kwargs)
         self._debug: bool = debug
-        return
 
     def _base_certificate_methods(self,
                                   method: str,

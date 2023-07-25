@@ -6,20 +6,6 @@ import time
 
 
 class ActiveBackupBusiness(base_api_core.Core):
-    def __init__(self,
-                 ip_address: str,
-                 port: str,
-                 username: str,
-                 password: str,
-                 secure: bool = False,
-                 cert_verify: bool = False,
-                 dsm_version: int = 7,
-                 debug: bool = True,
-                 otp_code: Optional[str] = None
-                 ) -> None:
-        super(ActiveBackupBusiness, self).__init__(ip_address, port, username, password, secure, cert_verify,
-                                                   dsm_version, debug, otp_code)
-        return
 
     def list_vm_hypervisor(self) -> dict[str, object] | str:
         api_name = 'SYNO.ActiveBackup.Inventory'

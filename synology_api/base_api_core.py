@@ -12,10 +12,16 @@ class Core(object):
                  cert_verify: bool = False,
                  dsm_version: int = 7,
                  debug: bool = True,
-                 otp_code: Optional[str] = None
+                 otp_code: Optional[str] = None,
+                 session: Optional[syn.Authentication] = None
                  ) -> None:
-        self.session: syn.Authentication = syn.Authentication(ip_address, port, username, password, secure, cert_verify,
-                                                              dsm_version, debug, otp_code)
+
+        if session is None:
+            self.session: syn.Authentication = syn.Authentication(ip_address, port, username, password, secure,
+                                                                  cert_verify, dsm_version, debug, otp_code)
+        else:
+            self.session = session
+
         self.session.login('Core')
         self.session.get_api_list('Core')
         self.session.get_api_list()

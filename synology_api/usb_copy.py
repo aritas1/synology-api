@@ -4,20 +4,6 @@ from . import base_api_core
 
 
 class USBCopy(base_api_core.Core):
-    def __init__(self,
-                 ip_address: str,
-                 port: str,
-                 username: str,
-                 password: str,
-                 secure: bool = False,
-                 cert_verify: bool = False,
-                 dsm_version: int = 7,
-                 debug: bool = True,
-                 otp_code: Optional[str] = None
-                 ) -> None:
-        super(USBCopy, self).__init__(ip_address, port, username, password, secure, cert_verify, dsm_version, debug,
-                                      otp_code)
-        return
 
     def usb_copy_info(self, id: int = 1) -> dict[str, object] | str:
         api_name = 'SYNO.USBCopy'
