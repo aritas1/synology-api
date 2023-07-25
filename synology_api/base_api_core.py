@@ -1,23 +1,23 @@
 from typing import Optional, Any
-from . import auth as syn
+from . import auth
 
 
 class Core(object):
     def __init__(self,
-                 ip_address: str,
-                 port: str,
-                 username: str,
-                 password: str,
+                 ip_address: Optional[str] = "",
+                 port: Optional[str] = "",
+                 username: Optional[str] = "",
+                 password: Optional[str] = "",
                  secure: bool = False,
                  cert_verify: bool = False,
                  dsm_version: int = 7,
                  debug: bool = True,
                  otp_code: Optional[str] = None,
-                 session: Optional[syn.Authentication] = None
+                 session: Optional[auth.Authentication] = None
                  ) -> None:
 
         if session is None:
-            self.session: syn.Authentication = syn.Authentication(ip_address, port, username, password, secure,
+            self.session: auth.Authentication = auth.Authentication(ip_address, port, username, password, secure,
                                                                   cert_verify, dsm_version, debug, otp_code)
         else:
             self.session = session
