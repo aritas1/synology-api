@@ -10,6 +10,7 @@ from .exceptions import FileStationError, AudioStationError, ActiveBackupError, 
 from .exceptions import CertificateError, DHCPServerError, DirectoryServerError, DockerError, DriveAdminError
 from .exceptions import LogCenterError, NoteStationError, OAUTHError, PhotosError, SecurityAdvisorError
 from .exceptions import UniversalSearchError, USBCopyError, VPNError, CoreSysInfoError, UndefinedError
+from .exceptions import ActiveBackupGSuiteError, ActiveBackupOffice365Error, CloudSyncError
 
 USE_EXCEPTIONS: bool = True
 
@@ -246,6 +247,15 @@ class Authentication:
                 # Audio station error:
                 elif api_name.find('AudioStation') > -1:
                     raise AudioStationError(error_code=error_code)
+                # Cloud sync error:
+                elif api_name.find('CloudSync') > -1:
+                    raise CloudSyncError(error_code=error_code)
+                # Active backup gsuite error:
+                elif api_name.find('ActiveBackupGSuite') > -1:
+                    raise ActiveBackupGSuiteError(error_code=error_code)
+                # Active backup office365 error:
+                elif api_name.find('ActiveBackupOffice365') > -1:
+                    raise ActiveBackupOffice365Error(error_code=error_code)
                 # Active backup error:
                 elif api_name.find('ActiveBackup') > -1:
                     raise ActiveBackupError(error_code=error_code)

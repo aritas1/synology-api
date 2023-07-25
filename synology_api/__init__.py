@@ -6,6 +6,9 @@ from . import \
     docker_api,\
     drive_admin_console,\
     core_active_backup,\
+    active_backup_gsuite,\
+    active_backup_office365,\
+    cloud_sync,\
     core_backup,\
     core_certificate,\
     core_sys_info,\
