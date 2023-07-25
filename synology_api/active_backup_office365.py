@@ -50,6 +50,20 @@ office365_error_codes: dict[int, str] = {
 }
 
 
+class ActiveBackupOffice365ServiceTypes(Enum):
+    # User
+    DRIVE = 0
+    MAIL = 1
+    CONTACT = 2
+    CALENDAR = 3
+    ARCHIVE_MAIL = 4
+    SITE = 5  # sharepoint
+    GROUP_MAIL = 6
+    GROUP_CALENDAR = 7  # educated guess
+    MYSITE = 8  # sharepoint personal
+    TEAMS = 9  # educated guess
+
+
 class ActiveBackupOffice365LogTypes(Enum):
     ALL = None
     INFO = 0
@@ -107,6 +121,48 @@ class ActiveBackupOffice365(base_api_core.Core):
                      'method': 'get_worker_count'}
 
         return self.request_data(api_name, api_path, req_param)
+
+    def list_local_user(self,
+                        task_id: int,
+                        offset: int = 0,
+                        limit: int = 200
+                        ) -> dict[str, object] | str:
+        """
+        returns a mix of "user_list", "team_list", "my_site_list" and "general_site_list"
+        """
+        api_name = 'SYNO.ActiveBackupOffice365'
+        info = self.gen_list[api_name]
+        api_path = info['path']
+
+        req_param = {'version': info['minVersion'],
+                     'method': 'list_local_user',
+                     'task_id': task_id,
+                     'offset': offset,
+                     'limit': limit,
+                     #'is_remove_storage': True,
+                     }
+
+        return self.request_data(api_name, api_path, req_param)
+
+    def list_local_group(self,
+                        task_id: int,
+                        offset: int = 0,
+                        limit: int = 200
+                        ) -> dict[str, object] | str:
+        api_name = 'SYNO.ActiveBackupOffice365'
+        info = self.gen_list[api_name]
+        api_path = info['path']
+
+        req_param = {'version': info['minVersion'],
+                     'method': 'list_local_group',
+                     'task_id': task_id,
+                     'offset': offset,
+                     'limit': limit,
+                     'group_type': 0  # all = 0, security = 1, distribution_list = 2, email security = 3
+                     }
+
+        return self.request_data(api_name, api_path, req_param)
+
 
     def list_tasks(self) -> dict[str, object] | str:
         """
