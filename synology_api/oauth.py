@@ -1,9 +1,8 @@
 from __future__ import annotations
-from typing import Optional
-from . import base_api_core
+from . import base_api
 
 
-class OAuth(base_api_core.Core):
+class OAuth(base_api.BaseApi):
 
     def clients(self, offset: int = 0, limit: int = 20) -> dict[str, object] | str:
         api_name = 'SYNO.OAUTH.Client'

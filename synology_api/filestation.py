@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Any
+from typing import Optional
 import os
 import time
 from datetime import datetime
@@ -8,26 +8,12 @@ import requests
 import sys
 from urllib import parse
 
-from . import auth as syn
+from . import base_api
 
 
-class FileStation:
-
-    def __init__(self,
-                 ip_address: str,
-                 port: str,
-                 username: str,
-                 password: str,
-                 secure: bool = False,
-                 cert_verify: bool = False,
-                 dsm_version: int = 7,
-                 debug: bool = True,
-                 otp_code: Optional[str] = None,
-                 interactive_output: bool = True
-                 ) -> None:
-
-        self.session: syn.Authentication = syn.Authentication(ip_address, port, username, password, secure, cert_verify,
-                                                              dsm_version, debug, otp_code)
+class FileStation(base_api.BaseApi):
+    def __init__(self, *args, interactive_output: bool = True, **kwargs) -> None:
+        super(FileStation, self).__init__(*args, application="FileStation", **kwargs)
 
         self._dir_taskid: str = ''
         self._dir_taskid_list: list[str] = []
@@ -43,24 +29,12 @@ class FileStation:
         self._extract_taskid_list: list[str] = []
         self._compress_taskid: str = ''
         self._compress_taskid_list: list[str] = []
-        self.request_data = self.session.request_data
-
-        self.session.login('FileStation')
-        self.session.get_api_list('FileStation')
-
-        self.file_station_list: Any = self.session.app_api_list
-        self._sid: str = self.session.sid
-        self.base_url: str = self.session.base_url
 
         self.interactive_output: bool = interactive_output
 
-    def logout(self) -> None:
-        self.session.logout('FileStation')
-        return
-
     def get_info(self) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Info'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'get', '_sid': self._sid}
 
@@ -76,7 +50,7 @@ class FileStation:
                        ) -> dict[str, object] | str:
 
         api_name = 'SYNO.FileStation.List'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'list_share'}
 
@@ -107,7 +81,7 @@ class FileStation:
                       additional: Optional[str | list[str]] = None) -> dict[str, object] | str:
 
         api_name = 'SYNO.FileStation.List'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'list'}
 
@@ -137,7 +111,7 @@ class FileStation:
                       additional: Optional[str | list[str]] = None
                       ) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.List'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'getinfo'}
 
@@ -182,7 +156,7 @@ class FileStation:
                      ) -> dict[str, object] | str:
 
         api_name = 'SYNO.FileStation.Search'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'start', 'folder_path': ''}
 
@@ -236,7 +210,7 @@ class FileStation:
                         additional: Optional[str | list[str]] = None
                         ) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Search'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'list', 'taskid': ''}
 
@@ -265,7 +239,7 @@ class FileStation:
 
     def stop_search_task(self, taskid: str) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Search'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'stop', 'taskid': self._search_taskid}
 
@@ -278,7 +252,7 @@ class FileStation:
 
     def stop_all_search_task(self) -> str:
         api_name = 'SYNO.FileStation.Search'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'stop', 'taskid': ''}
 
@@ -302,7 +276,7 @@ class FileStation:
                              ) -> dict[str, object] | str:
 
         api_name = 'SYNO.FileStation.VirtualFolder'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'list'}
 
@@ -333,7 +307,7 @@ class FileStation:
                           ) -> dict[str, object] | str:
 
         api_name = 'SYNO.FileStation.Favorite'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'list'}
 
@@ -358,7 +332,7 @@ class FileStation:
                        index: Optional[int] = None
                        ) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Favorite'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'add'}
 
@@ -374,7 +348,7 @@ class FileStation:
 
     def delete_a_favorite(self, path: Optional[str] = None) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Favorite'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'delete'}
 
@@ -387,7 +361,7 @@ class FileStation:
 
     def clear_broken_favorite(self) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Favorite'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'clear_broken'}
 
@@ -395,7 +369,7 @@ class FileStation:
 
     def edit_favorite_name(self, path: str, new_name: str) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Favorite'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'edit'}
 
@@ -413,7 +387,7 @@ class FileStation:
 
     def replace_all_favorite(self, path: str | list[str], name: str | list[str]):
         api_name = 'SYNO.FileStation.Favorite'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'edit'}
 
@@ -437,7 +411,7 @@ class FileStation:
 
     def start_dir_size_calc(self, path: str) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.DirSize'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'start'}
 
@@ -470,7 +444,7 @@ class FileStation:
 
     def stop_dir_size_calc(self, taskid: str) -> str:
         api_name = 'SYNO.FileStation.DirSize'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'stop', 'taskid': taskid}
 
@@ -486,7 +460,7 @@ class FileStation:
 
     def get_dir_status(self, taskid: Optional[str] = None) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.DirSize'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'status', 'taskid': taskid}
 
@@ -497,7 +471,7 @@ class FileStation:
 
     def start_md5_calc(self, file_path: str) -> str | dict[str, object]:
         api_name = 'SYNO.FileStation.MD5'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'start'}
 
@@ -520,7 +494,7 @@ class FileStation:
 
     def get_md5_status(self, taskid: Optional[str] = None) -> str | dict[str, object]:
         api_name = 'SYNO.FileStation.MD5'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'status'}
 
@@ -535,7 +509,7 @@ class FileStation:
 
     def stop_md5_calc(self, taskid: str) -> str:
         api_name = 'SYNO.FileStation.DirSize'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'stop', 'taskid': taskid}
 
@@ -556,7 +530,7 @@ class FileStation:
                           create_only: Optional[bool] = None
                           ) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.CheckPermission'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'write'}
 
@@ -581,7 +555,7 @@ class FileStation:
                     verify: bool = False
                     ) -> str | tuple[int, dict[str, object]]:
         api_name = 'SYNO.FileStation.Upload'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         filename = os.path.basename(file_path)
 
@@ -608,7 +582,7 @@ class FileStation:
 
     def get_shared_link_info(self, link_id: str) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Sharing'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'getinfo'}
 
@@ -628,7 +602,7 @@ class FileStation:
                              ) -> dict[str, object] | str:
 
         api_name = 'SYNO.FileStation.Sharing'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'list'}
 
@@ -647,7 +621,7 @@ class FileStation:
                             expire_times: int = 0
                             ) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Sharing'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'create'}
 
@@ -663,7 +637,7 @@ class FileStation:
 
     def delete_shared_link(self, link_id: str) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Sharing'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'delete'}
 
@@ -676,7 +650,7 @@ class FileStation:
 
     def clear_invalid_shared_link(self) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Sharing'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'clear_invalid'}
 
@@ -690,7 +664,7 @@ class FileStation:
                          expire_times: int = 0
                          ) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Sharing'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'edit'}
 
@@ -713,7 +687,7 @@ class FileStation:
                       additional: Optional[str | list[str]] = None
                       ) -> str | dict[str, object]:
         api_name = 'SYNO.FileStation.CreateFolder'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'create'}
 
@@ -761,7 +735,7 @@ class FileStation:
                       search_taskid: Optional[str] = None
                       ) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Rename'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'rename'}
 
@@ -809,7 +783,7 @@ class FileStation:
                         search_taskid: Optional[str] = None
                         ) -> str | dict[str, object]:
         api_name = 'SYNO.FileStation.CopyMove'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'start'}
 
@@ -856,7 +830,7 @@ class FileStation:
 
     def get_copy_move_status(self, taskid: str) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.CopyMove'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'status'}
 
@@ -869,7 +843,7 @@ class FileStation:
 
     def stop_copy_move_task(self, taskid: str) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.CopyMove'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'stop'}
 
@@ -889,7 +863,7 @@ class FileStation:
                           search_taskid: Optional[str] = None
                           ) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Delete'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'start'}
 
@@ -924,7 +898,7 @@ class FileStation:
 
     def get_delete_status(self, taskid: str) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Delete'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'status'}
 
@@ -937,7 +911,7 @@ class FileStation:
 
     def stop_delete_task(self, taskid: str) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Delete'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'stop'}
 
@@ -955,7 +929,7 @@ class FileStation:
                                  recursive: Optional[bool] = None,
                                  search_taskid: Optional[str] = None) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Delete'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'delete'}
 
@@ -990,7 +964,7 @@ class FileStation:
                            item_id: Optional[str] = None
                            ) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Extract'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'start', 'file_path': file_path,
                      'dest_folder_path': dest_folder_path}
@@ -1021,7 +995,7 @@ class FileStation:
 
     def get_extract_status(self, taskid: str) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Extract'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'status'}
 
@@ -1034,7 +1008,7 @@ class FileStation:
 
     def stop_extract_task(self, taskid: str) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Extract'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'stop'}
 
@@ -1058,7 +1032,7 @@ class FileStation:
                                  item_id: Optional[str] = None
                                  ) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Extract'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'list'}
 
@@ -1081,7 +1055,7 @@ class FileStation:
                                password: Optional[str] = None
                                ) -> dict[str, object] | str | tuple[str]:
         api_name = 'SYNO.FileStation.Compress'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'start'}
 
@@ -1125,7 +1099,7 @@ class FileStation:
 
     def get_compress_status(self, taskid: str) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Compress'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'status'}
 
@@ -1138,7 +1112,7 @@ class FileStation:
 
     def stop_compress_task(self, taskid: str) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.Compress'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'stop'}
 
@@ -1157,7 +1131,7 @@ class FileStation:
                                         api_filter: Optional[str] = None
                                         ) -> dict[str, object] | str:
         api_name = 'SYNO.FileStation.BackgroundTask'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'list'}
 
@@ -1184,7 +1158,7 @@ class FileStation:
                  ) -> Optional[str]:
 
         api_name = 'SYNO.FileStation.Download'
-        info = self.file_station_list[api_name]
+        info = self.session.app_api_list[api_name]
         api_path = info['path']
 
         if path is None:

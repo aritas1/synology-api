@@ -1,9 +1,9 @@
 from __future__ import annotations
 from typing import Optional
-from . import base_api_core
+from . import base_api
 
 
-class SysInfo(base_api_core.Core):
+class SysInfo(base_api.BaseApi):
 
     def fileserv_smb(self) -> dict[str, object] | str:
         api_name = 'SYNO.Core.FileServ.SMB'

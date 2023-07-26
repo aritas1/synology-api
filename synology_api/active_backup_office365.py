@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
-from . import base_api_core
+from . import base_api
 
 # error codes reverse engineered on 2.5.2-12818 from the description of the get_general_log and get_all_log endpoint
 office365_error_codes: dict[int, str] = {
@@ -86,7 +85,7 @@ class ActiveBackupOffice365Status(Enum):
     PARTIAL_FAILED = 6
 
 
-class ActiveBackupOffice365(base_api_core.Core):
+class ActiveBackupOffice365(base_api.BaseApi):
 
     def activation_status(self) -> dict[str, object] | str:
         api_name = 'SYNO.ActiveBackupOffice365'

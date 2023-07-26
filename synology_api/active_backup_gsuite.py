@@ -1,9 +1,8 @@
 from __future__ import annotations
-from typing import Optional
-from . import base_api_core
+from . import base_api
 
 
-class ActiveBackupGSuite(base_api_core.Core):
+class ActiveBackupGSuite(base_api.BaseApi):
 
     def activation_status(self) -> dict[str, object] | str:
         api_name = 'SYNO.ActiveBackupGSuite'

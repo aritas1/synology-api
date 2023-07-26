@@ -25,7 +25,8 @@ class Authentication:
                  cert_verify: bool = False,
                  dsm_version: int = 7,
                  debug: bool = True,
-                 otp_code: Optional[str] = None
+                 otp_code: Optional[str] = None,
+                 application: Optional[str] = None
                  ) -> None:
         self._ip_address: str = ip_address
         self._port: str = port
@@ -37,6 +38,7 @@ class Authentication:
         self._version: int = dsm_version
         self._debug: bool = debug
         self._otp_code: Optional[str] = otp_code
+        self._application: Optional[str] = application
         if self._verify is False:
             disable_warnings(InsecureRequestWarning)
         schema = 'https' if secure else 'http'
@@ -44,12 +46,15 @@ class Authentication:
 
         self.full_api_list = {}
         self.app_api_list = {}
-        return
 
     def verify_cert_enabled(self) -> bool:
         return self._verify
 
-    def login(self, application: str) -> None:
+    def login(self, application: Optional[str] = None) -> None:
+        if application is None:
+            if self._application is None:
+                raise Exception("undefined application, provided via login('appname') or on via Authentication init param")
+            application = self._application
         login_api = 'auth.cgi?api=SYNO.API.Auth'
         params = {'version': self._version, 'method': 'login', 'account': self._username,
                   'passwd': self._password, 'session': application, 'format': 'cookie'}
@@ -92,7 +97,6 @@ class Authentication:
                     print('Login failed: ' + self._get_error_message(error_code, 'Auth'))
                 if USE_EXCEPTIONS:
                     raise LoginError(error_code=error_code)
-        return
 
     def logout(self, application: str) -> None:
         logout_api = 'auth.cgi?api=SYNO.API.Auth'
@@ -123,8 +127,6 @@ class Authentication:
         if USE_EXCEPTIONS and error_code:
             raise LogoutError(error_code=error_code)
 
-        return
-
     def get_api_list(self, app: Optional[str] = None) -> None:
         query_path = 'query.cgi?api=SYNO.API.Info'
         list_query = {'version': '1', 'method': 'query', 'query': 'all'}
@@ -145,14 +147,16 @@ class Authentication:
             # Will raise its own errors:
             response_json = requests.get(self._base_url + query_path, list_query, verify=self._verify).json()
 
+        if self._application is not None:
+            app = self._application
+
         if app is not None:
             for key in response_json['data']:
                 if app.lower() in key.lower():
                     self.app_api_list[key] = response_json['data'][key]
-        else:
-            self.full_api_list = response_json['data']
 
-        return
+        # allways init full api
+        self.full_api_list = response_json['data']
 
     def show_api_name_list(self) -> None:
         prev_key = ''
@@ -160,7 +164,6 @@ class Authentication:
             if key != prev_key:
                 print(key)
                 prev_key = key
-        return
 
     def show_json_response_type(self) -> None:
         for key in self.full_api_list:
@@ -168,7 +171,6 @@ class Authentication:
                 if sub_key == 'requestFormat':
                     if self.full_api_list[key]['requestFormat'] == 'JSON':
                         print(key + '   Returns JSON data')
-        return
 
     def search_by_app(self, app: str) -> None:
         print_check = 0
@@ -179,7 +181,6 @@ class Authentication:
                 continue
         if print_check == 0:
             print('Not Found')
-        return
 
     def request_data(self,
                      api_name: str,

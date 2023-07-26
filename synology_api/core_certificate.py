@@ -2,17 +2,14 @@ from __future__ import annotations
 from io import BytesIO
 from typing import Optional
 
-from . import base_api_core
+from . import base_api
 
 import os
 import requests
 import json
 
 
-class Certificate(base_api_core.Core):
-    def __init__(self, debug: bool = True, *args, **kwargs):
-        super(Certificate, self).__init__(*args, **kwargs)
-        self._debug: bool = debug
+class Certificate(base_api.BaseApi):
 
     def _base_certificate_methods(self,
                                   method: str,

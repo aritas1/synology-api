@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
-from . import base_api_core
+from . import base_api
 
 
 class CloudSyncLogLevel(Enum):
@@ -39,7 +38,7 @@ class CloudSyncGroupingTypes(Enum):
     by_user = "group_by_user"
 
 
-class CloudSync(base_api_core.Core):
+class CloudSync(base_api.BaseApi):
 
     def list_conn(self, group_by: CloudSyncGroupingTypes = CloudSyncGroupingTypes.by_user) -> dict[str, object] | str:
         api_name = 'SYNO.CloudSync'

@@ -1,9 +1,8 @@
 from __future__ import annotations
-from typing import Optional
-from . import base_api_core
+from . import base_api
 
 
-class NoteStation(base_api_core.Core):
+class NoteStation(base_api.BaseApi):
 
     def settings_info(self) -> dict[str, object] | str:
         api_name = 'SYNO.NoteStation.Setting'

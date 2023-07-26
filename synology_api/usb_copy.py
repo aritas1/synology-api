@@ -1,9 +1,8 @@
 from __future__ import annotations
-from typing import Optional
-from . import base_api_core
+from . import base_api
 
 
-class USBCopy(base_api_core.Core):
+class USBCopy(base_api.BaseApi):
 
     def usb_copy_info(self, id: int = 1) -> dict[str, object] | str:
         api_name = 'SYNO.USBCopy'

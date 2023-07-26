@@ -1,9 +1,8 @@
 from __future__ import annotations
-from typing import Optional
-from . import base_api_core
+from . import base_api
 
 
-class LogCenter(base_api_core.Core):
+class LogCenter(base_api.BaseApi):
 
     def logcenter(self) -> dict[str, object] | str:
         api_name = 'SYNO.LogCenter.RecvRule'

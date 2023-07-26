@@ -1,9 +1,8 @@
 from __future__ import annotations
-from typing import Optional
-from . import base_api_core
+from . import base_api
 
 
-class VPN(base_api_core.Core):
+class VPN(base_api.BaseApi):
 
     def settings_list(self) -> dict[str, object] | str:
         api_name = 'SYNO.VPNServer.Settings.Config'

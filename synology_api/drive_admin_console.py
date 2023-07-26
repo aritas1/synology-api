@@ -1,9 +1,8 @@
 from __future__ import annotations
-from typing import Optional
-from . import base_api_core
+from . import base_api
 
 
-class AdminConsole(base_api_core.Core):
+class AdminConsole(base_api.BaseApi):
 
     def status_info(self) -> dict[str, object] | str:
         api_name = 'SYNO.SynologyDrive'
