@@ -474,6 +474,14 @@ class SysInfo(base_api.BaseApi):
 
         return self.request_data(api_name, api_path, req_param)
 
+    def get_system_health(self) -> dict[str, object] | str:
+        api_name = 'SYNO.Core.System.SystemHealth'
+        info = self.core_list[api_name]
+        api_path = info['path']
+        req_param = {'version': info['maxVersion'], 'method': 'get'}
+
+        return self.request_data(api_name, api_path, req_param)
+
     def get_cpu_temp(self) -> str:
         api_name = 'SYNO.Core.System'
         info = self.core_list[api_name]
@@ -914,6 +922,14 @@ class SysInfo(base_api.BaseApi):
 
     def auto_upgrade_status(self) -> dict[str, object] | str:
         api_name = 'SYNO.Core.Upgrade.AutoUpgrade'
+        info = self.core_list[api_name]
+        api_path = info['path']
+        req_param = {'version': info['maxVersion'], 'method': 'status'}
+
+        return self.request_data(api_name, api_path, req_param)
+
+    def upgrade_status(self) -> dict[str, object] | str:
+        api_name = 'SYNO.Core.Upgrade'
         info = self.core_list[api_name]
         api_path = info['path']
         req_param = {'version': info['maxVersion'], 'method': 'status'}
