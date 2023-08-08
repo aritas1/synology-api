@@ -1,5 +1,20 @@
 from __future__ import annotations
+
+from enum import Enum
+
 from . import base_api
+
+
+class ActiveBackupGSuiteStatus(Enum):
+    # as seen in the wild
+    SUCCESS = 1,
+    BACKUP_IN_PROGRESS = 3,  # ??
+    SUCCESS_NO_DATA_TRANSFERRED = 4,  # ??
+
+
+class ActiveBackupGSuiteTaskStatus(Enum):
+    # the is also a task status that may differ from status?
+    pass
 
 
 class ActiveBackupGSuite(base_api.BaseApi):

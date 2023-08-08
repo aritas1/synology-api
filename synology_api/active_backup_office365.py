@@ -80,9 +80,17 @@ class ActiveBackupOffice365LogCategory(Enum):
 
 class ActiveBackupOffice365Status(Enum):
     ALL = None
+    # global task status
     SUCCESS = 1
-    FAILED = 5
-    PARTIAL_FAILED = 6
+    PARTIAL_FAILED = 2
+    #FAILED = 3????
+
+
+class ActiveBackupOffice365TaskStatus(Enum):
+    ALL = None
+    #TASK_SUCCESS = 4?????
+    TASK_FAILED = 5
+    TASK_PARTIAL_FAILED = 6
 
 
 class ActiveBackupOffice365(base_api.BaseApi):
